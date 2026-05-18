@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#0a0a0a"/>
+<meta name="description" content="CAMTRACK PRO - Professional CCTV Installation Management"/>
+<title>CAMTRACK PRO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+:root {
+  --ink:#0a0a0a;
+  --paper:#f5f3ef;
+  --red:#c0392b;
+  --gold:#b8960c;
+  --mid:#6b6b6b;
+  --border:#d0cdc8;
+  --panel:#eeece8;
+  --success:#1a6b3c;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --font-ar:'IBM Plex Sans Arabic',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-mono);min-height:100vh;overflow-x:hidden}
+[dir="rtl"]{font-family:var(--font-ar)}
+.hidden{display:none!important}
+
+/* NOISE OVERLAY */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+
+/* TYPOGRAPHY */
+h1,h2,h3,.brand{font-family:var(--font-display);letter-spacing:0.05em}
+.brand{font-size:clamp(1.8rem,5vw,2.8rem);line-height:1}
+.mono{font-family:var(--font-mono)}
+
+/* SCREENS */
+.screen{position:fixed;inset:0;overflow-y:auto;z-index:10;transition:opacity .3s,transform .3s}
+.screen.inactive{opacity:0;pointer-events:none;transform:translateY(8px)}
+
+/* LOGIN */
+#screen-login{background:var(--ink);display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--paper);padding:2.5rem;width:min(420px,95vw);border:2px solid var(--ink);position:relative}
+.login-box::before{content:'';position:absolute;top:6px;left:6px;right:-6px;bottom:-6px;border:2px solid var(--ink);z-index:-1}
+.crosshair{position:absolute;width:20px;height:20px;border-color:var(--red)}
+.crosshair.tl{top:-2px;left:-2px;border-top:3px solid;border-left:3px solid}
+.crosshair.br{bottom:-2px;right:-2px;border-bottom:3px solid;border-right:3px solid}
+
+/* INPUTS */
+input,select,textarea{
+  width:100%;border:1.5px solid var(--border);background:white;
+  padding:.6rem .8rem;font-family:var(--font-mono);font-size:.85rem;
+  color:var(--ink);outline:none;transition:border-color .2s
+}
+input:focus,select:focus,textarea:focus{border-color:var(--ink)}
+[dir="rtl"] input,[dir="rtl"] select,[dir="rtl"] textarea{font-family:var(--font-ar);text-align:right}
+label{display:block;font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;color:var(--mid)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.55rem 1.2rem;font-family:var(--font-mono);font-size:.8rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;border:2px solid transparent;transition:all .15s}
+.btn-primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn-primary:hover{background:var(--red);border-color:var(--red)}
+.btn-secondary{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn-secondary:hover{background:var(--ink);color:var(--paper)}
+.btn-danger{background:var(--red);color:white;border-color:var(--red)}
+.btn-danger:hover{background:#922b21;border-color:#922b21}
+.btn-success{background:var(--success);color:white;border-color:var(--success)}
+.btn-gold{background:var(--gold);color:white;border-color:var(--gold)}
+.btn-sm{padding:.35rem .8rem;font-size:.7rem}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* TOP NAV */
+#topnav{position:sticky;top:0;z-index:100;background:var(--ink);color:var(--paper);display:flex;align-items:center;gap:1rem;padding:.6rem 1.2rem;border-bottom:3px solid var(--red)}
+.nav-tabs{display:flex;gap:2px;flex:1;overflow-x:auto}
+.nav-tab{padding:.45rem 1rem;font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-bottom:3px solid transparent;color:#aaa;white-space:nowrap;transition:all .15s}
+.nav-tab.active{color:var(--paper);border-bottom-color:var(--red)}
+.nav-tab:hover{color:var(--paper)}
+
+/* CARDS */
+.card{background:white;border:1.5px solid var(--border);padding:1.25rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1.5px solid var(--border)}
+.card-title{font-size:1rem;font-weight:600;letter-spacing:.04em;display:flex;align-items:center;gap:.5rem}
+
+/* STAT CARDS */
+.stat-card{background:var(--ink);color:var(--paper);padding:1.25rem;border:2px solid var(--ink)}
+.stat-val{font-family:var(--font-display);font-size:2.8rem;line-height:1;color:var(--red)}
+.stat-label{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-top:.25rem}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:.2rem .55rem;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid}
+.badge-active{color:var(--success);border-color:var(--success);background:#e8f5ee}
+.badge-inactive{color:var(--red);border-color:var(--red);background:#fdf0ee}
+.badge-pending{color:var(--gold);border-color:var(--gold);background:#fdf8e1}
+.badge-complex{color:#7b2fbe;border-color:#7b2fbe;background:#f5edff}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{text-align:left;padding:.5rem .8rem;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mid);border-bottom:2px solid var(--border);background:var(--panel)}
+td{padding:.6rem .8rem;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:hover td{background:var(--panel)}
+[dir="rtl"] th,[dir="rtl"] td{text-align:right}
+
+/* STARS */
+.stars{display:flex;gap:2px}
+.star{font-size:1.2rem;cursor:pointer;color:#ddd;transition:color .1s}
+.star.filled{color:var(--gold)}
+.star:hover,.star:hover~.star{color:#ddd}
+.stars:hover .star{color:var(--gold)}
+.stars .star:hover~.star{color:#ddd!important}
+
+/* PROGRESS BAR */
+.progress-bar{height:6px;background:var(--border);position:relative;overflow:hidden}
+.progress-fill{height:100%;background:var(--ink);transition:width .6s}
+.progress-fill.red{background:var(--red)}
+.progress-fill.gold{background:var(--gold)}
+
+/* ALERT BOX */
+.alert{padding:.7rem 1rem;border-left:4px solid;font-size:.8rem;margin-bottom:.75rem}
+.alert-info{border-color:#2980b9;background:#eaf4fb;color:#1a5276}
+.alert-warn{border-color:var(--gold);background:#fdf8e1;color:#7d6608}
+.alert-error{border-color:var(--red);background:#fdf0ee;color:#922b21}
+.alert-success{border-color:var(--success);background:#e8f5ee;color:#1a6b3c}
+[dir="rtl"] .alert{border-left:none;border-right:4px solid}
+
+/* LANG TOGGLE */
+.lang-btn{font-size:.7rem;font-weight:700;letter-spacing:.1em;cursor:pointer;padding:.3rem .6rem;border:1.5px solid #555;color:#ccc;background:transparent;transition:all .15s}
+.lang-btn.active-lang{background:var(--red);border-color:var(--red);color:white}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{background:var(--paper);border:2px solid var(--ink);width:min(560px,95vw);max-height:90vh;overflow-y:auto;position:relative}
+.modal::after{content:'';position:absolute;top:8px;left:8px;right:-8px;bottom:-8px;border:2px solid var(--ink);z-index:-1;pointer-events:none}
+.modal-header{background:var(--ink);color:var(--paper);padding:.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.modal-body{padding:1.5rem}
+
+/* PRINT RECEIPT */
+@media print{
+  body>*:not(#print-area){display:none!important}
+  #print-area{display:block!important;position:static}
+}
+#print-area{display:none}
+
+/* SIDEBAR PANEL */
+.side-panel{position:fixed;right:0;top:0;bottom:0;width:min(400px,95vw);background:white;border-left:2px solid var(--ink);z-index:150;transform:translateX(100%);transition:transform .3s;overflow-y:auto}
+.side-panel.open{transform:translateX(0)}
+[dir="rtl"] .side-panel{right:auto;left:0;border-left:none;border-right:2px solid var(--ink);transform:translateX(-100%)}
+[dir="rtl"] .side-panel.open{transform:translateX(0)}
+
+/* COMPLEXITY TAG */
+.complexity-tag{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .6rem;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border:1.5px solid #7b2fbe;color:#7b2fbe;background:#f5edff}
+.complexity-tag::before{content:'⬡';font-size:.8rem}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--panel)}
+::-webkit-scrollbar-thumb{background:var(--border)}
+::-webkit-scrollbar-thumb:hover{background:var(--mid)}
+
+/* GRID */
+.main-grid{display:grid;gap:1rem;padding:1rem}
+@media(min-width:768px){.main-grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.main-grid.cols3{grid-template-columns:repeat(3,1fr)}}
+.col-span-2{grid-column:span 2}
+.col-span-3{grid-column:span 3}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.animate-in{animation:fadeUp .3s ease forwards}
+.pulse{animation:pulse 2s infinite}
+
+/* RATING DISPLAY */
+.rating-big{font-size:3rem;font-family:var(--font-display);color:var(--gold);line-height:1}
+
+/* CATEGORY PILL */
+.cat-pill{display:inline-flex;align-items:center;padding:.3rem .7rem;border:1.5px solid var(--ink);font-size:.7rem;font-weight:700;letter-spacing:.08em;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.cat-pill:hover,.cat-pill.active{background:var(--ink);color:var(--paper)}
+
+/* SCORE RING */
+.score-ring{width:64px;height:64px;border-radius:50%;border:4px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.1rem;position:relative}
+
+/* NOTIFICATION DOT */
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;animation:pulse 1.5s infinite}
+
+/* SECTION DIVIDER */
+.sec-divider{display:flex;align-items:center;gap:.75rem;margin:1.5rem 0}
+.sec-divider::before,.sec-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-divider span{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--mid);white-space:nowrap}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="screen-login" class="screen">
+  <div class="login-box animate-in">
+    <div class="crosshair tl"></div>
+    <div class="crosshair br"></div>
+    
+    <!-- Lang toggles -->
+    <div style="display:flex;gap:.4rem;margin-bottom:1.5rem;justify-content:flex-end">
+      <button class="lang-btn active-lang" onclick="setLang('fr')" id="lb-fr">FR</button>
+      <button class="lang-btn" onclick="setLang('ar')" id="lb-ar">ع</button>
+    </div>
+
+    <!-- Logo -->
+    <div style="margin-bottom:2rem">
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" fill="#0a0a0a"/>
+          <circle cx="18" cy="18" r="10" stroke="#c0392b" stroke-width="2" fill="none"/>
+          <circle cx="18" cy="18" r="3" fill="#c0392b"/>
+          <line x1="18" y1="4" x2="18" y2="10" stroke="#c0392b" stroke-width="2"/>
+          <line x1="18" y1="26" x2="18" y2="32" stroke="#c0392b" stroke-width="2"/>
+          <line x1="4" y1="18" x2="10" y2="18" stroke="#c0392b" stroke-width="2"/>
+          <line x1="26" y1="18" x2="32" y2="18" stroke="#c0392b" stroke-width="2"/>
+        </svg>
+        <div>
+          <div class="brand" style="color:var(--ink)">CAMTRACK</div>
+          <div style="font-size:.65rem;letter-spacing:.25em;color:var(--red);font-weight:700;margin-top:-4px">PRO // SYSTÈME DE GESTION</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="login-alert" class="hidden"></div>
+
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <div>
+        <label data-i18n="login.user">IDENTIFIANT</label>
+        <input type="text" id="login-user" placeholder="username" autocomplete="username"/>
+      </div>
+      <div>
+        <label data-i18n="login.pass">MOT DE PASSE</label>
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:.5rem" onclick="doLogin()">
+        <span data-i18n="login.btn">CONNEXION</span>
+        <span>→</span>
+      </button>
+    </div>
+
+    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.65rem;color:var(--mid);text-align:center" data-i18n="login.hint">
+      Accès réservé au personnel autorisé · Credentials fournis par l'administrateur
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP SCREEN ============ -->
+<div id="screen-app" class="screen inactive">
+  <!-- TOP NAV -->
+  <div id="topnav">
+    <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0">
+      <svg width="24" height="24" viewBox="0 0 36 36" fill="none">
+        <rect width="36" height="36" fill="#c0392b"/>
+        <circle cx="18" cy="18" r="10" stroke="white" stroke-width="2" fill="none"/>
+        <circle cx="18" cy="18" r="3" fill="white"/>
+        <line x1="18" y1="4" x2="18" y2="10" stroke="white" stroke-width="2"/>
+        <line x1="18" y1="26" x2="18" y2="32" stroke="white" stroke-width="2"/>
+        <line x1="4" y1="18" x2="10" y2="18" stroke="white" stroke-width="2"/>
+        <line x1="26" y1="18" x2="32" y2="18" stroke="white" stroke-width="2"/>
+      </svg>
+      <span class="brand" style="color:white;font-size:1.1rem">CAMTRACK PRO</span>
+    </div>
+    <div class="nav-tabs" id="nav-tabs"></div>
+    <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0">
+      <button class="lang-btn" onclick="setLang('fr')" id="lb-fr2">FR</button>
+      <button class="lang-btn" onclick="setLang('ar')" id="lb-ar2">ع</button>
+      <div style="font-size:.7rem;color:#aaa" id="user-badge"></div>
+      <button class="btn btn-sm" style="background:#c0392b;border-color:#c0392b;color:white" onclick="doLogout()">
+        <span data-i18n="nav.logout">DÉCO</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- TAB CONTENT -->
+  <div id="tab-content"></div>
+</div>
+
+<!-- ============ MODAL ============ -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="closeModalOverlay(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header" id="modal-title-bar">
+      <span id="modal-title-text">MODAL</span>
+      <button onclick="closeModal()" style="background:none;border:none;color:white;cursor:pointer;font-size:1.2rem">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<!-- SIDE PANEL -->
+<div id="side-panel" class="side-panel">
+  <div style="background:var(--ink);color:white;padding:.9rem 1.25rem;display:flex;justify-content:space-between;align-items:center">
+    <span id="side-panel-title" style="font-size:.85rem;font-weight:700;letter-spacing:.06em"></span>
+    <button onclick="closeSidePanel()" style="background:none;border:none;color:white;cursor:pointer;font-size:1.2rem">✕</button>
+  </div>
+  <div id="side-panel-body" style="padding:1.25rem"></div>
+</div>
+<div id="side-overlay" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:140" onclick="closeSidePanel()"></div>
+
+<!-- PRINT AREA -->
+<div id="print-area"></div>
+
+<script>
+// =============================================
+// TRANSLATIONS
+// =============================================
+const i18n = {
+  fr:{
+    'login.user':'IDENTIFIANT',
+    'login.pass':'MOT DE PASSE',
+    'login.btn':'CONNEXION',
+    'login.hint':'Accès réservé au personnel autorisé · Credentials fournis par l\'administrateur',
+    'nav.logout':'DÉCO',
+    'tab.dashboard':'TABLEAU DE BORD',
+    'tab.engineers':'INGÉNIEURS',
+    'tab.projects':'PROJETS',
+    'tab.inventory':'INVENTAIRE',
+    'tab.reports':'RAPPORTS',
+    'tab.mytasks':'MES TÂCHES',
+    'tab.logform':'RAPPORT JOURNALIER',
+    'tab.logistics':'LOGISTIQUE',
+    'tab.knowledge':'BASE DE CONNAISSANCES',
+    'tab.profile':'MON PROFIL',
+  },
+  ar:{
+    'login.user':'اسم المستخدم',
+    'login.pass':'كلمة المرور',
+    'login.btn':'تسجيل الدخول',
+    'login.hint':'الوصول مخصص للموظفين المخولين فقط · بيانات الدخول يوفرها المشرف',
+    'nav.logout':'خروج',
+    'tab.dashboard':'لوحة التحكم',
+    'tab.engineers':'المهندسون',
+    'tab.projects':'المشاريع',
+    'tab.inventory':'المخزون',
+    'tab.reports':'التقارير',
+    'tab.mytasks':'مهامي',
+    'tab.logform':'تقرير يومي',
+    'tab.logistics':'اللوجستيات',
+    'tab.knowledge':'قاعدة المعرفة',
+    'tab.profile':'ملفي الشخصي',
+  }
+};
+
+let currentLang = 'fr';
+function t(key){return (i18n[currentLang]||i18n.fr)[key]||i18n.fr[key]||key}
+
+function setLang(lang){
+  currentLang=lang;
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  ['lb-fr','lb-fr2'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.classList.toggle('active-lang',lang==='fr')}
+  });
+  ['lb-ar','lb-ar2'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){el.classList.toggle('active-lang',lang==='ar')}
+  });
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    el.textContent=t(key);
+  });
+  if(appState.currentUser) renderApp();
+}
+
+// =============================================
+// DATA STORE (localStorage)
+// =============================================
+const DB = {
+  get(key){try{return JSON.parse(localStorage.getItem('ctp_'+key))}catch{return null}},
+  set(key,val){localStorage.setItem('ctp_'+key,JSON.stringify(val))},
+  del(key){localStorage.removeItem('ctp_'+key)}
+};
+
+function initDB(){
+  if(!DB.get('initialized')){
+    DB.set('users',[
+      {id:'u001',username:'admin',password:'admin123',role:'admin',name:'Mohamed Amine',active:true,createdAt:now()},
+      {id:'u002',username:'karim',password:'karim123',role:'engineer',name:'Karim Bensalah',active:true,createdAt:now(),
+       scores:{ip_camera:42,mobile_access:18,networking:35,nvr_config:28},avgRating:4.6,totalJobs:24},
+      {id:'u003',username:'youcef',password:'youcef123',role:'engineer',name:'Youcef Hamdani',active:true,createdAt:now(),
+       scores:{ip_camera:28,mobile_access:30,networking:15,nvr_config:22},avgRating:4.2,totalJobs:15},
+      {id:'u004',username:'sara',password:'sara123',role:'engineer',name:'Sara Meziane',active:false,createdAt:now(),
+       scores:{ip_camera:55,mobile_access:45,networking:50,nvr_config:48},avgRating:4.9,totalJobs:38},
+    ]);
+    DB.set('projects',[
+      {id:'p001',name:'Complexe El Yasmine – Sécurité',client:'Immobilier El Yasmine',status:'active',priority:'high',
+       cameras:52,nvr_count:3,has_switch:true,unified_mobile:true,complex:true,
+       assignedTo:'u002',startDate:'2025-12-01',deadline:'2026-02-28',progress:68,
+       description:'Installation 52 caméras IP, 3 NVRs bridgés via switcher, accès mobile unifié'},
+      {id:'p002',name:'Pharmacie Centrale – Surveillance',client:'Dr. Boussekkine',status:'completed',priority:'normal',
+       cameras:8,nvr_count:1,has_switch:false,unified_mobile:true,complex:false,
+       assignedTo:'u003',startDate:'2025-11-10',deadline:'2025-11-20',progress:100,
+       description:'8 caméras HD, 1 NVR, accès smartphone'},
+      {id:'p003',name:'Entrepôt LogiPro',client:'LogiPro SARL',status:'active',priority:'urgent',
+       cameras:24,nvr_count:2,has_switch:true,unified_mobile:true,complex:false,
+       assignedTo:'u002',startDate:'2026-01-15',deadline:'2026-02-10',progress:35,
+       description:'24 caméras extérieures, 2 NVRs, liaison réseau switcher'},
+    ]);
+    DB.set('logs',[
+      {id:'l001',engineerId:'u002',projectId:'p001',date:'2026-01-20',hours:8,
+       categories:{ip_camera:3,mobile_access:1,networking:2,nvr_config:2},
+       equipment:['NVR Hikvision DS-9632NXI','Switch TP-Link TL-SG1024'],
+       notes:'Pose des 18 premières caméras côté nord. Config switch VLAN.',
+       status:'submitted'},
+      {id:'l002',engineerId:'u003',projectId:'p002',date:'2025-11-15',hours:6,
+       categories:{ip_camera:2,mobile_access:2,networking:1,nvr_config:1},
+       equipment:['NVR Dahua NVR4108-EI'],
+       notes:'Installation terminée. Config Hik-Connect pour accès mobile.',
+       status:'submitted'},
+    ]);
+    DB.set('alerts',[
+      {id:'a001',engineerId:'u002',projectId:'p001',type:'material',message:'Besoin 12 câbles Cat6 + 2 têtes de montage PTZ pour demain matin',date:'2026-01-21',read:false},
+      {id:'a002',engineerId:'u003',projectId:'p003',type:'urgent',message:'Câble alimentation NVR défectueux – remplacement urgent requis',date:'2026-01-22',read:false},
+    ]);
+    DB.set('inventory',[
+      {id:'i001',name:'Caméra IP Hikvision DS-2CD2143G2-I',category:'cameras',model:'DS-2CD2143G2-I',brand:'Hikvision',
+       qty:15,docUrl:'https://www.hikvision.com/en/support/download/firmware/',
+       notes:'4MP AcuSense Fixed Dome'},
+      {id:'i002',name:'NVR Hikvision DS-9632NXI',category:'nvrs',model:'DS-9632NXI',brand:'Hikvision',
+       qty:3,docUrl:'https://www.hikvision.com/en/support/download/',
+       notes:'32-ch 4K NVR, 2 SATA'},
+      {id:'i003',name:'Switch TP-Link TL-SG1024',category:'switches',model:'TL-SG1024',brand:'TP-Link',
+       qty:5,docUrl:'https://www.tp-link.com/en/support/download/tl-sg1024/',
+       notes:'24-Port Gigabit'},
+      {id:'i004',name:'Caméra Dahua IPC-HDW2849H-S-IL',category:'cameras',model:'IPC-HDW2849H-S-IL',brand:'Dahua',
+       qty:8,docUrl:'https://www.dahuasecurity.com/support/downloadCenter/',
+       notes:'8MP Smart Dual Light'},
+    ]);
+    DB.set('ratings',[
+      {id:'r001',engineerId:'u002',projectId:'p001',quality:5,speed:4,average:4.5,date:'2026-01-18',clientName:'M. Bensalah'},
+      {id:'r002',engineerId:'u003',projectId:'p002',quality:4,speed:5,average:4.5,date:'2025-11-18',clientName:'Dr. Boussekkine'},
+    ]);
+    DB.set('initialized',true);
+  }
+}
+
+function now(){return new Date().toISOString().split('T')[0]}
+function uid(){return 'id'+(Date.now()).toString(36)}
+
+// =============================================
+// APP STATE
+// =============================================
+const appState={
+  currentUser:null,
+  activeTab:null,
+};
+
+// =============================================
+// AUTH
+// =============================================
+function doLogin(){
+  const username=document.getElementById('login-user').value.trim();
+  const password=document.getElementById('login-pass').value;
+  const users=DB.get('users')||[];
+  const user=users.find(u=>u.username===username&&u.password===password);
+  const alertEl=document.getElementById('login-alert');
+  
+  if(!user){
+    alertEl.className='alert alert-error';
+    alertEl.textContent='Identifiant ou mot de passe incorrect.';
+    alertEl.classList.remove('hidden');
+    return;
+  }
+  if(!user.active){
+    alertEl.className='alert alert-error';
+    alertEl.textContent='Compte désactivé. Contactez votre administrateur.';
+    alertEl.classList.remove('hidden');
+    return;
+  }
+  appState.currentUser=user;
+  alertEl.classList.add('hidden');
+  showApp();
+}
+
+function doLogout(){
+  appState.currentUser=null;
+  appState.activeTab=null;
+  document.getElementById('screen-login').classList.remove('inactive');
+  document.getElementById('screen-app').classList.add('inactive');
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!document.getElementById('screen-login').classList.contains('inactive')){
+    doLogin();
+  }
+});
+
+// =============================================
+// APP INIT
+// =============================================
+function showApp(){
+  document.getElementById('screen-login').classList.add('inactive');
+  document.getElementById('screen-app').classList.remove('inactive');
+  renderApp();
+}
+
+function renderApp(){
+  const user=appState.currentUser;
+  document.getElementById('user-badge').textContent=user.name+(user.role==='admin'?' [ADMIN]':' [ENG]');
+  
+  const tabs = user.role==='admin'
+    ? ['dashboard','engineers','projects','inventory','reports']
+    : ['mytasks','logform','logistics','knowledge','profile'];
+  
+  const tabsEl=document.getElementById('nav-tabs');
+  tabsEl.innerHTML='';
+  tabs.forEach((tab,i)=>{
+    const btn=document.createElement('button');
+    btn.className='nav-tab'+((!appState.activeTab&&i===0)||appState.activeTab===tab?' active':'');
+    btn.textContent=t('tab.'+tab);
+    btn.onclick=()=>switchTab(tab);
+    tabsEl.appendChild(btn);
+  });
+  
+  if(!appState.activeTab) appState.activeTab=tabs[0];
+  renderTab(appState.activeTab);
+}
+
+function switchTab(tab){
+  appState.activeTab=tab;
+  document.querySelectorAll('.nav-tab').forEach(btn=>{
+    btn.classList.toggle('active',btn.textContent===t('tab.'+tab));
+  });
+  renderTab(tab);
+}
+
+function renderTab(tab){
+  const el=document.getElementById('tab-content');
+  el.innerHTML='';
+  const renderers={
+    dashboard:renderDashboard,
+    engineers:renderEngineers,
+    projects:renderProjects,
+    inventory:renderInventory,
+    reports:renderReports,
+    mytasks:renderMyTasks,
+    logform:renderLogForm,
+    logistics:renderLogistics,
+    knowledge:renderKnowledge,
+    profile:renderProfile,
+  };
+  if(renderers[tab]) renderers[tab](el);
+}
+
+// =============================================
+// ADMIN: DASHBOARD
+// =============================================
+function renderDashboard(el){
+  const projects=DB.get('projects')||[];
+  const logs=DB.get('logs')||[];
+  const alerts=DB.get('alerts')||[];
+  const users=DB.get('users')||[];
+  const inventory=DB.get('inventory')||[];
+  
+  const active=projects.filter(p=>p.status==='active').length;
+  const urgent=projects.filter(p=>p.priority==='urgent').length;
+  const unread=alerts.filter(a=>!a.read).length;
+  const engCount=users.filter(u=>u.role==='engineer'&&u.active).length;
+  const complex=projects.filter(p=>p.complex).length;
+
+  el.innerHTML=`
+  <div style="padding:1rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div>
+        <h2 style="font-size:1.6rem;letter-spacing:.04em">TABLEAU DE BORD</h2>
+        <div style="font-size:.7rem;color:var(--mid);letter-spacing:.1em">${now()} · ${currentLang==='ar'?'مراقبة مباشرة':'SURVEILLANCE EN TEMPS RÉEL'}</div>
+      </div>
+      ${unread>0?`<div style="display:flex;align-items:center;gap:.5rem;background:#fdf0ee;border:1.5px solid var(--red);padding:.5rem .9rem;font-size:.75rem;font-weight:700;color:var(--red)">
+        <span class="notif-dot"></span> ${unread} ALERTE${unread>1?'S':''} NON LUE${unread>1?'S':''}
+      </div>`:''}
+    </div>
+
+    <!-- STAT CARDS -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.75rem;margin-bottom:1.25rem">
+      <div class="stat-card animate-in">
+        <div class="stat-val">${active}</div>
+        <div class="stat-label">${currentLang==='ar'?'مشاريع نشطة':'INSTALLATIONS ACTIVES'}</div>
+      </div>
+      <div class="stat-card animate-in" style="animation-delay:.05s">
+        <div class="stat-val" style="color:var(--gold)">${engCount}</div>
+        <div class="stat-label">${currentLang==='ar'?'مهندسون نشطون':'INGÉNIEURS ACTIFS'}</div>
+      </div>
+      <div class="stat-card animate-in" style="animation-delay:.1s">
+        <div class="stat-val" style="color:${urgent>0?'var(--red)':'#aaa'}">${urgent}</div>
+        <div class="stat-label">${currentLang==='ar'?'مشاريع عاجلة':'PROJETS URGENTS'}</div>
+      </div>
+      <div class="stat-card animate-in" style="animation-delay:.15s">
+        <div class="stat-val" style="color:#7b2fbe">${complex}</div>
+        <div class="stat-label">${currentLang==='ar'?'مشاريع معقدة':'INSTALLATIONS COMPLEXES'}</div>
+      </div>
+      <div class="stat-card animate-in" style="animation-delay:.2s">
+        <div class="stat-val" style="color:var(--gold)">${unread}</div>
+        <div class="stat-label">${currentLang==='ar'?'تنبيهات معلقة':'ALERTES EN ATTENTE'}</div>
+      </div>
+      <div class="stat-card animate-in" style="animation-delay:.25s">
+        <div class="stat-val">${inventory.reduce((s,i)=>s+i.qty,0)}</div>
+        <div class="stat-label">${currentLang==='ar'?'وحدات المخزون':'UNITÉS EN STOCK'}</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <!-- ACTIVE PROJECTS -->
+      <div class="card animate-in" style="animation-delay:.3s">
+        <div class="card-header">
+          <div class="card-title">📋 ${currentLang==='ar'?'المشاريع النشطة':'PROJETS ACTIFS'}</div>
+          <button class="btn btn-sm btn-secondary" onclick="switchTab('projects')">${currentLang==='ar'?'عرض الكل':'VOIR TOUT'}</button>
+        </div>
+        ${projects.filter(p=>p.status==='active').map(p=>{
+          const eng=users.find(u=>u.id===p.assignedTo);
+          return `<div style="padding:.75rem 0;border-bottom:1px solid var(--border)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">
+              <div>
+                <span style="font-weight:600;font-size:.85rem">${p.name}</span>
+                ${p.complex?`<span class="complexity-tag" style="margin-left:.5rem;font-size:.55rem">COMPLEXE</span>`:''}
+                ${p.priority==='urgent'?`<span class="badge badge-inactive" style="margin-left:.3rem;font-size:.55rem">URGENT</span>`:''}
+              </div>
+              <span style="font-size:.7rem;color:var(--mid)">${p.cameras} cam</span>
+            </div>
+            <div style="font-size:.7rem;color:var(--mid);margin-bottom:.5rem">${eng?eng.name:'N/A'} · Deadline: ${p.deadline}</div>
+            <div class="progress-bar">
+              <div class="progress-fill ${p.progress>80?'':'p.progress>50?\'gold\':\'\''}" style="width:${p.progress}%;background:${p.progress>80?'var(--success)':p.progress>50?'var(--gold)':'var(--red)'}"></div>
+            </div>
+            <div style="font-size:.65rem;color:var(--mid);margin-top:.2rem">${p.progress}% complété</div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- ALERTS -->
+      <div class="card animate-in" style="animation-delay:.35s">
+        <div class="card-header">
+          <div class="card-title">🔔 ${currentLang==='ar'?'التنبيهات':'ALERTES TERRAIN'}</div>
+          <button class="btn btn-sm btn-secondary" onclick="markAllRead()">${currentLang==='ar'?'قراءة الكل':'TOUT LU'}</button>
+        </div>
+        ${alerts.length===0?`<div style="text-align:center;padding:2rem;color:var(--mid);font-size:.8rem">${currentLang==='ar'?'لا توجد تنبيهات':'Aucune alerte'}</div>`:
+        alerts.map(a=>{
+          const eng=users.find(u=>u.id===a.engineerId);
+          const proj=projects.find(p=>p.id===a.projectId);
+          return `<div style="padding:.6rem;margin-bottom:.5rem;border-left:3px solid ${a.type==='urgent'?'var(--red)':'var(--gold)'};background:${a.read?'white':'#fffbf0'};${a.read?'opacity:.6':''}">
+            <div style="display:flex;justify-content:space-between;align-items:start">
+              <div style="font-size:.75rem;font-weight:700">${a.type==='urgent'?'🚨 URGENT':'📦 MATÉRIEL'} · ${eng?eng.name:'?'}</div>
+              ${!a.read?`<button class="btn btn-sm" style="font-size:.6rem;padding:.15rem .4rem" onclick="markRead('${a.id}')">LU</button>`:''}
+            </div>
+            <div style="font-size:.75rem;margin:.3rem 0">${a.message}</div>
+            <div style="font-size:.65rem;color:var(--mid)">${proj?proj.name:''} · ${a.date}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- EXPERT RECOMMENDATION ENGINE -->
+    <div class="card animate-in" style="margin-top:1rem;animation-delay:.4s">
+      <div class="card-header">
+        <div class="card-title">🤖 ${currentLang==='ar'?'محرك توصية الخبراء':'MOTEUR DE RECOMMANDATION D\'EXPERTS'}</div>
+        <span style="font-size:.65rem;color:var(--mid);letter-spacing:.08em">ALGORITHME IA INTERNE</span>
+      </div>
+      <div id="rec-engine-ui">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem">
+          <div>
+            <label>TAILLE DU PROJET</label>
+            <select id="rec-size">
+              <option value="small">Petit (< 10 caméras)</option>
+              <option value="medium">Moyen (10-40 caméras)</option>
+              <option value="large">Grand (> 40 caméras)</option>
+            </select>
+          </div>
+          <div>
+            <label>SCÉNARIO RÉSEAU</label>
+            <select id="rec-net">
+              <option value="simple">Simple (1 NVR)</option>
+              <option value="multi">Multi-NVR + Switch</option>
+              <option value="bridge">Bridging Multi-Site</option>
+            </select>
+          </div>
+          <div>
+            <label>ACCÈS MOBILE UNIFIÉ</label>
+            <select id="rec-mobile">
+              <option value="no">Non requis</option>
+              <option value="yes">Oui – Vue unifiée</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="runRecommendation()">
+          ▶ LANCER L'ANALYSE DE COMPÉTENCES
+        </button>
+        <div id="rec-results" style="margin-top:1rem"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function markRead(id){
+  const alerts=DB.get('alerts')||[];
+  const a=alerts.find(x=>x.id===id);
+  if(a) a.read=true;
+  DB.set('alerts',alerts);
+  renderTab('dashboard');
+}
+
+function markAllRead(){
+  const alerts=DB.get('alerts')||[];
+  alerts.forEach(a=>a.read=true);
+  DB.set('alerts',alerts);
+  renderTab('dashboard');
+}
+
+function runRecommendation(){
+  const size=document.getElementById('rec-size').value;
+  const net=document.getElementById('rec-net').value;
+  const mobile=document.getElementById('rec-mobile').value;
+  const users=DB.get('users')||[];
+  
+  const engineers=users.filter(u=>u.role==='engineer'&&u.active&&u.scores);
+  
+  const scored=engineers.map(eng=>{
+    let score=0;
+    const s=eng.scores;
+    if(size==='large') score+=s.nvr_config*2+s.networking*2;
+    else if(size==='medium') score+=s.ip_camera*1.5+s.nvr_config;
+    else score+=s.ip_camera*2;
+    if(net==='multi'||net==='bridge') score+=s.networking*2+s.nvr_config;
+    if(mobile==='yes') score+=s.mobile_access*2;
+    score+=eng.avgRating*10;
+    return {...eng,matchScore:Math.round(score)};
+  }).sort((a,b)=>b.matchScore-a.matchScore);
+  
+  const resultsEl=document.getElementById('rec-results');
+  if(scored.length===0){resultsEl.innerHTML=`<div class="alert alert-warn">Aucun ingénieur actif disponible.</div>`;return;}
+  
+  const isComplex = size==='large'&&net!=='simple'&&mobile==='yes';
+  
+  resultsEl.innerHTML=`
+    ${isComplex?`<div class="alert alert-info" style="margin-bottom:.75rem">
+      <strong>⬡ INSTALLATION COMPLEXE DÉTECTÉE</strong> — 
+      Ce projet nécessite une configuration multi-NVR bridgée via switcher réseau avec vue mobile unifiée. 
+      L'ingénieur recommandé doit maîtriser le routage VLAN, le tunneling RTSP et la configuration de l'app de surveillance.
+    </div>`:''}
+    <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--mid);margin-bottom:.5rem">
+      CLASSEMENT PAR COMPATIBILITÉ
+    </div>
+    ${scored.map((eng,i)=>`
+      <div style="display:flex;align-items:center;gap:1rem;padding:.75rem;background:${i===0?'var(--ink)':'var(--panel)'};color:${i===0?'white':'var(--ink)'};margin-bottom:2px;border:1.5px solid ${i===0?'var(--red)':'var(--border)'}">
+        <div style="font-family:var(--font-display);font-size:2rem;width:2.5rem;text-align:center;color:${i===0?'var(--red)':'var(--mid)'}">${i+1}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.9rem">${eng.name}</div>
+          <div style="font-size:.65rem;opacity:.7;margin-top:.15rem">
+            📷 Cam:${eng.scores.ip_camera} · 📱 Mobile:${eng.scores.mobile_access} · 🌐 Net:${eng.scores.networking} · 🎞️ NVR:${eng.scores.nvr_config} · ⭐${eng.avgRating}
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--font-display);font-size:1.8rem;color:${i===0?'var(--red)':'var(--gold)'}">${eng.matchScore}</div>
+          <div style="font-size:.6rem;opacity:.7">SCORE</div>
+        </div>
+        ${i===0?`<span style="background:var(--red);color:white;padding:.2rem .5rem;font-size:.6rem;font-weight:800;letter-spacing:.1em">RECOMMANDÉ</span>`:''}
+      </div>
+    `).join('')}
+  `;
+}
+
+// =============================================
+// ADMIN: ENGINEERS
+// =============================================
+function renderEngineers(el){
+  const users=DB.get('users')||[];
+  const engineers=users.filter(u=>u.role==='engineer');
+  
+  el.innerHTML=`
+  <div style="padding:1rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2 style="font-size:1.6rem">GESTION DES INGÉNIEURS</h2>
+      <button class="btn btn-primary" onclick="openAddEngineer()">+ NOUVEL INGÉNIEUR</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem">
+    ${engineers.map(eng=>{
+      const s=eng.scores||{ip_camera:0,mobile_access:0,networking:0,nvr_config:0};
+      const total=Object.values(s).reduce((a,b)=>a+b,0);
+      return `
+      <div class="card animate-in" style="${!eng.active?'opacity:.65;border-color:var(--red)':''}">
+        <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:.75rem">
+          <div>
+            <div style="font-weight:700;font-size:1rem">${eng.name}</div>
+            <div style="font-size:.7rem;color:var(--mid);margin-top:.15rem">@${eng.username}</div>
+          </div>
+          <div style="display:flex;gap:.3rem;align-items:center">
+            <span class="badge ${eng.active?'badge-active':'badge-inactive'}">${eng.active?'ACTIF':'INACTIF'}</span>
+          </div>
+        </div>
+
+        <!-- COMPETENCY MATRIX -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.75rem">
+          ${[
+            ['📷 Caméra IP',s.ip_camera,120],
+            ['📱 Mobile/Remote',s.mobile_access,80],
+            ['🌐 Réseau Avancé',s.networking,100],
+            ['🎞️ Config NVR',s.nvr_config,100],
+          ].map(([label,val,max])=>`
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:.65rem;margin-bottom:.2rem">
+                <span>${label}</span><span style="font-weight:700">${val}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width:${Math.min(100,Math.round(val/max*100))}%;background:${val>80?'var(--success)':val>40?'var(--gold)':'var(--ink)'}"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0;border-top:1px solid var(--border);margin-bottom:.75rem">
+          <div style="font-size:.7rem;color:var(--mid)">Score total: <strong>${total}</strong> pts</div>
+          <div style="font-size:.7rem">⭐ ${eng.avgRating||'—'} · ${eng.totalJobs||0} missions</div>
+        </div>
+
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="btn btn-sm btn-secondary" onclick="viewEngineerHistory('${eng.id}')">HISTORIQUE</button>
+          <button class="btn btn-sm ${eng.active?'btn-danger':'btn-success'}" onclick="toggleEngineerStatus('${eng.id}')">
+            ${eng.active?'DÉSACTIVER':'ACTIVER'}
+          </button>
+          <button class="btn btn-sm btn-secondary" onclick="editEngineerPass('${eng.id}')">MOT DE PASSE</button>
+        </div>
+      </div>`;
+    }).join('')}
+    </div>
+  </div>`;
+}
+
+function openAddEngineer(){
+  showModal('NOUVEL INGÉNIEUR',`
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <div><label>NOM COMPLET</label><input type="text" id="ne-name" placeholder="Prénom Nom"/></div>
+      <div><label>IDENTIFIANT (username)</label><input type="text" id="ne-user" placeholder="prenom.nom"/></div>
+      <div><label>MOT DE PASSE INITIAL</label><input type="password" id="ne-pass" placeholder="••••••••"/></div>
+      <div class="alert alert-info">Le compte sera immédiatement actif. L'ingénieur ne peut pas créer son propre compte.</div>
+      <button class="btn btn-primary" onclick="createEngineer()">CRÉER LE COMPTE</button>
+    </div>
+  `);
+}
+
+function createEngineer(){
+  const name=document.getElementById('ne-name').value.trim();
+  const username=document.getElementById('ne-user').value.trim();
+  const password=document.getElementById('ne-pass').value;
+  if(!name||!username||!password){alert('Tous les champs sont requis');return;}
+  const users=DB.get('users')||[];
+  if(users.find(u=>u.username===username)){alert('Identifiant déjà utilisé');return;}
+  users.push({id:uid(),username,password,role:'engineer',name,active:true,createdAt:now(),
+    scores:{ip_camera:0,mobile_access:0,networking:0,nvr_config:0},avgRating:0,totalJobs:0});
+  DB.set('users',users);
+  closeModal();
+  renderTab('engineers');
+}
+
+function toggleEngineerStatus(id){
+  const users=DB.get('users')||[];
+  const u=users.find(x=>x.id===id);
+  if(!u) return;
+  const action=u.active?'désactiver':'activer';
+  if(!confirm(`Confirmer: ${action} le compte de ${u.name}?\n\nNote: L'historique et les données restent intacts.`)) return;
+  u.active=!u.active;
+  DB.set('users',users);
+  // If currently logged in as that user, force logout
+  if(appState.currentUser&&appState.currentUser.id===id){
+    doLogout(); return;
+  }
+  renderTab('engineers');
+}
+
+function editEngineerPass(id){
+  showModal('MODIFIER MOT DE PASSE',`
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <div><label>NOUVEAU MOT DE PASSE</label><input type="password" id="ep-pass" placeholder="••••••••"/></div>
+      <button class="btn btn-primary" onclick="saveEngineerPass('${id}')">SAUVEGARDER</button>
+    </div>
+  `);
+}
+
+function saveEngineerPass(id){
+  const pass=document.getElementById('ep-pass').value;
+  if(!pass){alert('Veuillez saisir un mot de passe');return;}
+  const users=DB.get('users')||[];
+  const u=users.find(x=>x.id===id);
+  if(u) u.password=pass;
+  DB.set('users',users);
+  closeModal();
+  showToast('Mot de passe mis à jour.');
+}
+
+function viewEngineerHistory(id){
+  const users=DB.get('users')||[];
+  const logs=DB.get('logs')||[];
+  const projects=DB.get('projects')||[];
+  const ratings=DB.get('ratings')||[];
+  const eng=users.find(u=>u.id===id);
+  if(!eng) return;
+  
+  const engLogs=logs.filter(l=>l.engineerId===id);
+  const engRatings=ratings.filter(r=>r.engineerId===id);
+  
+  showModal(`HISTORIQUE — ${eng.name}`,`
+    <div class="alert ${eng.active?'alert-success':'alert-error'}" style="margin-bottom:1rem">
+      Compte ${eng.active?'ACTIF':'INACTIF'} · Données conservées pour traçabilité
+    </div>
+    <div class="sec-divider"><span>RAPPORTS D'INTERVENTION (${engLogs.length})</span></div>
+    ${engLogs.length===0?'<p style="font-size:.8rem;color:var(--mid)">Aucun rapport</p>':
+    engLogs.map(l=>{
+      const proj=projects.find(p=>p.id===l.projectId);
+      return `<div style="border:1px solid var(--border);padding:.75rem;margin-bottom:.5rem">
+        <div style="display:flex;justify-content:space-between;font-size:.8rem;font-weight:700">
+          <span>${proj?proj.name:'Projet supprimé'}</span><span>${l.date}</span>
+        </div>
+        <div style="font-size:.75rem;color:var(--mid);margin-top:.25rem">${l.hours}h · ${l.notes}</div>
+        <div style="font-size:.65rem;margin-top:.25rem">📷${l.categories.ip_camera} 📱${l.categories.mobile_access} 🌐${l.categories.networking} 🎞️${l.categories.nvr_config}</div>
+      </div>`;
+    }).join('')}
+    <div class="sec-divider"><span>ÉVALUATIONS CLIENTS (${engRatings.length})</span></div>
+    ${engRatings.map(r=>`
+      <div style="display:flex;align-items:center;gap:1rem;padding:.5rem;border-bottom:1px solid var(--border)">
+        <div style="font-size:1.4rem;font-weight:700;color:var(--gold)">${r.average}</div>
+        <div>
+          <div style="font-size:.8rem">${r.clientName||'Client'}</div>
+          <div style="font-size:.65rem;color:var(--mid)">Qualité: ${r.quality}★ · Rapidité: ${r.speed}★ · ${r.date}</div>
+        </div>
+      </div>
+    `).join('')}
+  `);
+}
+
+// =============================================
+// ADMIN: PROJECTS
+// =============================================
+function renderProjects(el){
+  const projects=DB.get('projects')||[];
+  const users=DB.get('users')||[];
+  
+  el.innerHTML=`
+  <div style="padding:1rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2 style="font-size:1.6rem">GESTION DES PROJETS</h2>
+      <button class="btn btn-primary" onclick="openNewProject()">+ NOUVEAU PROJET</button>
+    </div>
+
+    <table>
+      <thead><tr>
+        <th>PROJET</th><th>CLIENT</th><th>INGÉNIEUR</th><th>CAMÉRAS</th><th>COMPLEXITÉ</th><th>STATUT</th><th>AVANCEMENT</th><th>ACTIONS</th>
+      </tr></thead>
+      <tbody>
+      ${projects.map(p=>{
+        const eng=users.find(u=>u.id===p.assignedTo);
+        return `<tr>
+          <td>
+            <div style="font-weight:700;font-size:.85rem">${p.name}</div>
+            <div style="font-size:.65rem;color:var(--mid)">${p.deadline}</div>
+          </td>
+          <td style="font-size:.8rem">${p.client}</td>
+          <td style="font-size:.8rem">${eng?eng.name:'Non assigné'}</td>
+          <td style="font-size:.85rem;font-weight:700">${p.cameras}</td>
+          <td>
+            ${p.complex?`<span class="complexity-tag">MULTI-NVR</span>`:'<span style="font-size:.7rem;color:var(--mid)">Standard</span>'}
+            ${p.has_switch?`<span style="font-size:.6rem;display:block;color:#7b2fbe;margin-top:2px">+ Switch VLAN</span>`:''}
+            ${p.unified_mobile?`<span style="font-size:.6rem;display:block;color:#2980b9">📱 Vue unifiée</span>`:''}
+          </td>
+          <td>
+            <span class="badge ${p.status==='active'?'badge-active':p.status==='completed'?'badge-active':'badge-pending'}">
+              ${p.status.toUpperCase()}
+            </span>
+            ${p.priority==='urgent'?`<span class="badge badge-inactive" style="margin-left:.3rem">URGENT</span>`:''}
+          </td>
+          <td style="min-width:100px">
+            <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%;background:${p.progress===100?'var(--success)':p.progress>50?'var(--gold)':'var(--ink)'}"></div></div>
+            <div style="font-size:.65rem;color:var(--mid);margin-top:.15rem">${p.progress}%</div>
+          </td>
+          <td>
+            <div style="display:flex;gap:.3rem">
+              <button class="btn btn-sm btn-secondary" onclick="editProject('${p.id}')">ÉDITER</button>
+              <button class="btn btn-sm btn-secondary" onclick="updateProgress('${p.id}')">AVANCE</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function openNewProject(){
+  const users=DB.get('users')||[];
+  const engineers=users.filter(u=>u.role==='engineer'&&u.active);
+  showModal('NOUVEAU PROJET',`
+    <div style="display:flex;flex-direction:column;gap:.9rem">
+      <div><label>NOM DU PROJET</label><input id="np-name" type="text" placeholder="Ex: Résidence Les Oliviers"/></div>
+      <div><label>CLIENT</label><input id="np-client" type="text" placeholder="Nom du client"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div><label>DATE DE DÉBUT</label><input id="np-start" type="date" value="${now()}"/></div>
+        <div><label>DEADLINE</label><input id="np-deadline" type="date"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div><label>NB CAMÉRAS</label><input id="np-cams" type="number" value="8" min="1"/></div>
+        <div><label>NB NVR/DVR</label><input id="np-nvr" type="number" value="1" min="1"/></div>
+      </div>
+      <div>
+        <label>INGÉNIEUR ASSIGNÉ</label>
+        <select id="np-eng">
+          <option value="">-- Choisir --</option>
+          ${engineers.map(e=>`<option value="${e.id}">${e.name}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label>PRIORITÉ</label>
+        <select id="np-priority">
+          <option value="normal">Normal</option>
+          <option value="high">Haute priorité</option>
+          <option value="urgent">URGENT</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.4rem">
+        <label style="margin-bottom:0">OPTIONS RÉSEAU</label>
+        <label style="font-size:.75rem;display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:0;cursor:pointer">
+          <input type="checkbox" id="np-switch"/> Bridging multi-NVR via Switcher réseau
+        </label>
+        <label style="font-size:.75rem;display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:0;cursor:pointer">
+          <input type="checkbox" id="np-mobile"/> Vue mobile unifiée (app unique)
+        </label>
+      </div>
+      <div><label>DESCRIPTION</label><textarea id="np-desc" rows="3" placeholder="Détails du projet..."></textarea></div>
+      <button class="btn btn-primary" onclick="saveNewProject()">CRÉER LE PROJET</button>
+    </div>
+  `);
+}
+
+function saveNewProject(){
+  const cams=parseInt(document.getElementById('np-cams').value)||0;
+  const nvr=parseInt(document.getElementById('np-nvr').value)||1;
+  const hasSwitch=document.getElementById('np-switch').checked;
+  const mobile=document.getElementById('np-mobile').checked;
+  const complex=cams>40&&nvr>1&&hasSwitch;
+  
+  const projects=DB.get('projects')||[];
+  projects.push({
+    id:uid(),
+    name:document.getElementById('np-name').value||'Nouveau Projet',
+    client:document.getElementById('np-client').value||'Client',
+    status:'active',
+    priority:document.getElementById('np-priority').value,
+    cameras:cams,nvr_count:nvr,
+    has_switch:hasSwitch,unified_mobile:mobile,complex,
+    assignedTo:document.getElementById('np-eng').value,
+    startDate:document.getElementById('np-start').value,
+    deadline:document.getElementById('np-deadline').value||'',
+    progress:0,
+    description:document.getElementById('np-desc').value,
+  });
+  DB.set('projects',projects);
+  closeModal();
+  renderTab('projects');
+}
+
+function updateProgress(id){
+  const projects=DB.get('projects')||[];
+  const p=projects.find(x=>x.id===id);
+  if(!p) return;
+  showModal(`AVANCEMENT — ${p.name}`,`
+    <div>
+      <label>POURCENTAGE D'AVANCEMENT (${p.progress}% actuellement)</label>
+      <input type="range" id="prog-val" min="0" max="100" value="${p.progress}" 
+        oninput="document.getElementById('prog-disp').textContent=this.value+'%'"
+        style="width:100%;accent-color:var(--ink)"/>
+      <div id="prog-disp" style="font-size:2rem;font-family:var(--font-display);text-align:center;margin:.5rem 0">${p.progress}%</div>
+      <div style="display:flex;gap:.5rem">
+        <button class="btn btn-primary" style="flex:1" onclick="saveProgress('${id}')">SAUVEGARDER</button>
+        ${p.progress<100?`<button class="btn btn-success" style="flex:1" onclick="completeProject('${id}')">MARQUER TERMINÉ</button>`:''}
+      </div>
+    </div>
+  `);
+}
+
+function saveProgress(id){
+  const val=parseInt(document.getElementById('prog-val').value);
+  const projects=DB.get('projects')||[];
+  const p=projects.find(x=>x.id===id);
+  if(p){p.progress=val;if(val===100)p.status='completed';}
+  DB.set('projects',projects);
+  closeModal();
+  renderTab('projects');
+}
+
+function completeProject(id){
+  const projects=DB.get('projects')||[];
+  const p=projects.find(x=>x.id===id);
+  if(p){p.progress=100;p.status='completed';}
+  DB.set('projects',projects);
+  closeModal();
+  renderTab('projects');
+}
+
+function editProject(id){
+  updateProgress(id);
+}
+
+// =============================================
+// ADMIN: INVENTORY
+// =============================================
+function renderInventory(el){
+  const inventory=DB.get('inventory')||[];
+  const cats=['cameras','nvrs','switches','routers','accessories'];
+  
+  el.innerHTML=`
+  <div style="padding:1rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <h2 style="font-size:1.6rem">INVENTAIRE ÉQUIPEMENTS</h2>
+      <button class="btn btn-primary" onclick="openAddEquipment()">+ AJOUTER ÉQUIPEMENT</button>
+    </div>
+    
+    <div class="alert alert-info" style="margin-bottom:1rem">
+      💡 <strong>Import rapide :</strong> Collez l'URL d'une fiche produit ou d'un PDF technique pour lier la documentation officielle.
+    </div>
+
+    <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+      <button class="cat-pill active" onclick="filterInventory('all',this)">TOUT</button>
+      ${cats.map(c=>`<button class="cat-pill" onclick="filterInventory('${c}',this)">${c.toUpperCase()}</button>`).join('')}
+    </div>
+
+    <table>
+      <thead><tr>
+        <th>ÉQUIPEMENT</th><th>CATÉGORIE</th><th>MARQUE</th><th>QTÉ STOCK</th><th>DOCUMENTATION</th><th>ACTIONS</th>
+      </tr></thead>
+      <tbody id="inv-tbody">
+      ${inventory.map(item=>`
+        <tr data-cat="${item.category}">
+          <td>
+            <div style="font-weight:700;font-size:.85rem">${item.name}</div>
+            <div style="font-size:.65rem;color:var(--mid)">${item.model}</div>
+          </td>
+          <td><span class="badge badge-pending" style="font-size:.6rem">${item.category.toUpperCase()}</span></td>
+          <td style="font-size:.8rem">${item.brand}</td>
+          <td>
+            <span style="font-family:var(--font-display);font-size:1.6rem;${item.qty<3?'color:var(--red)':'color:var(--success)'}">${item.qty}</span>
+          </td>
+          <td>
+            ${item.docUrl?`<a href="${item.docUrl}" target="_blank" class="btn btn-sm btn-secondary" style="text-decoration:none">🔗 DOC</a>`:'<span style="font-size:.7rem;color:var(--mid)">Aucune</span>'}
+          </td>
+          <td>
+            <div style="display:flex;gap:.3rem">
+              <button class="btn btn-sm btn-secondary" onclick="editInventoryItem('${item.id}')">ÉDITER</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteInventoryItem('${item.id}')">✕</button>
+            </div>
+          </td>
+        </tr>
+      `).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+function filterInventory(cat,btn){
+  document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#inv-tbody tr').forEach(row=>{
+    row.style.display=(cat==='all'||row.dataset.cat===cat)?'':'none';
+  });
+}
+
+function openAddEquipment(){
+  showModal('AJOUTER ÉQUIPEMENT',`
+    <div style="display:flex;flex-direction:column;gap:.9rem">
+      <div><label>NOM</label><input id="eq-name" type="text" placeholder="Ex: Caméra IP Hikvision DS-2CD2T47G2-L"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div><label>MODÈLE</label><input id="eq-model" type="text" placeholder="DS-2CD2T47G2-L"/></div>
+        <div><label>MARQUE</label><input id="eq-brand" type="text" placeholder="Hikvision"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div>
+          <label>CATÉGORIE</label>
+          <select id="eq-cat">
+            <option value="cameras">Caméras</option>
+            <option value="nvrs">NVR/DVR</option>
+            <option value="switches">Switches</option>
+            <option value="routers">Routeurs/Modems</option>
+            <option value="accessories">Accessoires</option>
+          </select>
+        </div>
+        <div><label>QTÉ EN STOCK</label><input id="eq-qty" type="number" value="1" min="0"/></div>
+      </div>
+      <div>
+        <label>URL DOCUMENTATION OFFICIELLE / PDF TECHNIQUE</label>
+        <input id="eq-url" type="url" placeholder="https://www.hikvision.com/support/download/..."/>
+        <div style="font-size:.65rem;color:var(--mid);margin-top:.25rem">Collez l'URL directe vers la fiche technique ou la page de support du fabricant.</div>
+      </div>
+      <div><label>NOTES</label><textarea id="eq-notes" rows="2" placeholder="Caractéristiques clés..."></textarea></div>
+      <button class="btn btn-primary" onclick="saveEquipment()">AJOUTER AU STOCK</button>
+    </div>
+  `);
+}
+
+function saveEquipment(){
+  const inventory=DB.get('inventory')||[];
+  inventory.push({
+    id:uid(),
+    name:document.getElementById('eq-name').value||'Équipement',
+    model:document.getElementById('eq-model').value||'',
+    brand:document.getElementById('eq-brand').value||'',
+    category:document.getElementById('eq-cat').value,
+    qty:parseInt(document.getElementById('eq-qty').value)||0,
+    docUrl:document.getElementById('eq-url').value||'',
+    notes:document.getElementById('eq-notes').value||'',
+  });
+  DB.set('inventory',inventory);
+  closeModal();
+  renderTab('inventory');
+}
+
+function editInventoryItem(id){
+  const inventory=DB.get('inventory')||[];
+  const item=inventory.find(x=>x.id===id);
+  if(!item) return;
+  showModal(`MODIFIER — ${item.name}`,`
+    <div style="display:flex;flex-direction:column;gap:.9rem">
+      <div><label>NOM</label><input id="eq-name" type="text" value="${item.name}"/></div>
+      <div><label>QTÉ</label><input id="eq-qty" type="number" value="${item.qty}" min="0"/></div>
+      <div><label>URL DOC</label><input id="eq-url" type="url" value="${item.docUrl||''}"/></div>
+      <div><label>NOTES</label><textarea id="eq-notes" rows="2">${item.notes||''}</textarea></div>
+      <button class="btn btn-primary" onclick="updateEquipment('${id}')">SAUVEGARDER</button>
+    </div>
+  `);
+}
+
+function updateEquipment(id){
+  const inventory=DB.get('inventory')||[];
+  const item=inventory.find(x=>x.id===id);
+  if(item){
+    item.name=document.getElementById('eq-name').value;
+    item.qty=parseInt(document.getElementById('eq-qty').value)||0;
+    item.docUrl=document.getElementById('eq-url').value;
+    item.notes=document.getElementById('eq-notes').value;
+  }
+  DB.set('inventory',inventory);
+  closeModal();
+  renderTab('inventory');
+}
+
+function deleteInventoryItem(id){
+  if(!confirm('Supprimer cet équipement?')) return;
+  const inventory=DB.get('inventory')||[];
+  DB.set('inventory',inventory.filter(x=>x.id!==id));
+  renderTab('inventory');
+}
+
+// =============================================
+// ADMIN: REPORTS
+// =============================================
+function renderReports(el){
+  const logs=DB.get('logs')||[];
+  const users=DB.get('users')||[];
+  const projects=DB.get('projects')||[];
+  const ratings=DB.get('ratings')||[];
+  
+  // Auto-calculate competency scores from logs
+  const allEngineers=users.filter(u=>u.role==='engineer');
+  
+  el.innerHTML=`
+  <div style="padding:1rem">
+    <h2 style="font-size:1.6rem;margin-bottom:1rem">RAPPORTS & MATRICE DE COMPÉTENCES</h2>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <!-- COMPETENCY MATRIX TABLE -->
+      <div class="card" style="grid-column:span 2">
+        <div class="card-header">
+          <div class="card-title">📊 MATRICE DE COMPÉTENCES — ÉQUIPE</div>
+          <button class="btn btn-sm btn-secondary" onclick="recalcScores()">🔄 RECALCULER</button>
+        </div>
+        <table>
+          <thead><tr>
+            <th>INGÉNIEUR</th>
+            <th>📷 CAMÉRA IP</th>
+            <th>📱 MOBILE/REMOTE</th>
+            <th>🌐 RÉSEAU AVANCÉ</th>
+            <th>🎞️ CONFIG NVR</th>
+            <th>SCORE TOTAL</th>
+            <th>⭐ RATING MOY.</th>
+            <th>MISSIONS</th>
+          </tr></thead>
+          <tbody>
+          ${allEngineers.map(eng=>{
+            const s=eng.scores||{};
+            const total=Object.values(s).reduce((a,b)=>a+b,0);
+            return `<tr>
+              <td>
+                <div style="font-weight:700">${eng.name}</div>
+                <span class="badge ${eng.active?'badge-active':'badge-inactive'}" style="font-size:.55rem">${eng.active?'ACTIF':'INACTIF'}</span>
+              </td>
+              <td><span style="font-family:var(--font-display);font-size:1.3rem">${s.ip_camera||0}</span></td>
+              <td><span style="font-family:var(--font-display);font-size:1.3rem">${s.mobile_access||0}</span></td>
+              <td><span style="font-family:var(--font-display);font-size:1.3rem">${s.networking||0}</span></td>
+              <td><span style="font-family:var(--font-display);font-size:1.3rem">${s.nvr_config||0}</span></td>
+              <td><strong style="font-size:1.1rem">${total}</strong></td>
+              <td>
+                <span style="font-size:1.1rem;color:var(--gold)">★ ${eng.avgRating||'—'}</span>
+              </td>
+              <td>${eng.totalJobs||0}</td>
+            </tr>`;
+          }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ALL LOGS -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📋 TOUS LES RAPPORTS D'INTERVENTION (${logs.length})</div>
+      </div>
+      ${logs.length===0?`<p style="font-size:.8rem;color:var(--mid);padding:1rem">Aucun rapport soumis</p>`:
+      `<table>
+        <thead><tr>
+          <th>INGÉNIEUR</th><th>PROJET</th><th>DATE</th><th>HEURES</th>
+          <th>CAM</th><th>MOB</th><th>NET</th><th>NVR</th><th>NOTES</th>
+        </tr></thead>
+        <tbody>
+        ${logs.map(l=>{
+          const eng=users.find(u=>u.id===l.engineerId);
+          const proj=projects.find(p=>p.id===l.projectId);
+          return `<tr>
+            <td style="font-weight:700;font-size:.8rem">${eng?eng.name:'Compte supprimé'}</td>
+            <td style="font-size:.75rem">${proj?proj.name:'Projet archivé'}</td>
+            <td style="font-size:.75rem">${l.date}</td>
+            <td style="font-weight:700">${l.hours}h</td>
+            <td>${l.categories.ip_camera}</td>
+            <td>${l.categories.mobile_access}</td>
+            <td>${l.categories.networking}</td>
+            <td>${l.categories.nvr_config}</td>
+            <td style="font-size:.7rem;max-width:200px;white-space:normal">${l.notes}</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table>`}
+    </div>
+  </div>`;
+}
+
+function recalcScores(){
+  const logs=DB.get('logs')||[];
+  const users=DB.get('users')||[];
+  const ratings=DB.get('ratings')||[];
+  
+  users.forEach(u=>{
+    if(u.role!=='engineer') return;
+    const engLogs=logs.filter(l=>l.engineerId===u.id);
+    const scores={ip_camera:0,mobile_access:0,networking:0,nvr_config:0};
+    engLogs.forEach(l=>{
+      scores.ip_camera+=l.categories.ip_camera*5;
+      scores.mobile_access+=l.categories.mobile_access*5;
+      scores.networking+=l.categories.networking*5;
+      scores.nvr_config+=l.categories.nvr_config*5;
+    });
+    u.scores=scores;
+    u.totalJobs=engLogs.length;
+    const engRatings=ratings.filter(r=>r.engineerId===u.id);
+    if(engRatings.length>0){
+      u.avgRating=Math.round(engRatings.reduce((s,r)=>s+r.average,0)/engRatings.length*10)/10;
+    }
+  });
+  DB.set('users',users);
+  renderTab('reports');
+  showToast('Scores recalculés depuis les rapports.');
+}
+
+// =============================================
+// ENGINEER: MY TASKS
+// =============================================
+function renderMyTasks(el){
+  const user=appState.currentUser;
+  const projects=DB.get('projects')||[];
+  const logs=DB.get('logs')||[];
+  const ratings=DB.get('ratings')||[];
+  
+  const myProjects=projects.filter(p=>p.assignedTo===user.id);
+  const myLogs=logs.filter(l=>l.engineerId===user.id);
+  const myRatings=ratings.filter(r=>r.engineerId===user.id);
+  const avgRating=myRatings.length>0?Math.round(myRatings.reduce((s,r)=>s+r.average,0)/myRatings.length*10)/10:0;
+  
+  el.innerHTML=`
+  <div style="padding:1rem">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+      <div style="width:56px;height:56px;background:var(--ink);border:3px solid var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.6rem;color:white">
+        ${user.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
+      </div>
+      <div>
+        <div style="font-size:1.3rem;font-weight:700">${user.name}</div>
+        <div style="font-size:.7rem;color:var(--mid);letter-spacing:.1em">INGÉNIEUR TERRAIN · @${user.username}</div>
+      </div>
+    </div>
+
+    <!-- QUICK STATS -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem">
+      ${[
+        ['📋',myLogs.length,'RAPPORTS'],
+        ['🏗️',myProjects.filter(p=>p.status==='active').length,'ACTIFS'],
+        ['⭐',avgRating||'—','RATING MOY.'],
+        ['✅',myProjects.filter(p=>p.status==='completed').length,'TERMINÉS'],
+      ].map(([icon,val,label])=>`
+        <div class="stat-card" style="padding:.9rem;text-align:center">
+          <div style="font-size:1.2rem">${icon}</div>
+          <div class="stat-val" style="font-size:2rem">${val}</div>
+          <div class="stat-label" style="font-size:.6rem">${label}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- MY PROJECTS -->
+    <h3 style="font-size:1rem;font-weight:700;margin-bottom:.75rem;letter-spacing:.06em">MES PROJETS EN COURS</h3>
+    ${myProjects.filter(p=>p.status==='active').length===0?
+      `<div class="alert alert-info">Aucun projet actif assigné.</div>`:
+      myProjects.filter(p=>p.status==='active').map(p=>`
+      <div class="card animate-in" style="margin-bottom:.75rem">
+        <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:.75rem">
+          <div>
+            <div style="font-weight:700;font-size:1rem">${p.name}</div>
+            <div style="font-size:.7rem;color:var(--mid)">${p.client} · Deadline: ${p.deadline}</div>
+          </div>
+          <div style="display:flex;gap:.3rem;align-items:center">
+            ${p.complex?`<span class="complexity-tag">COMPLEXE</span>`:''}
+            ${p.priority==='urgent'?`<span class="badge badge-inactive">URGENT</span>`:''}
+          </div>
+        </div>
+        ${p.complex?`
+          <div class="alert alert-warn" style="margin-bottom:.75rem;font-size:.75rem">
+            <strong>⬡ Scénario Réseau Complexe</strong><br>
+            ${p.cameras} caméras · ${p.nvr_count} NVR/DVR bridgés via Switch réseau · Vue mobile unifiée requise.<br>
+            Configurer le VLAN, routing RTSP, et centraliser sur une seule application client.
+          </div>
+        `:''}
+        <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem">
+          <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${p.progress}%;background:${p.progress>80?'var(--success)':p.progress>50?'var(--gold)':'var(--ink)'}"></div></div>
+          <span style="font-size:.75rem;font-weight:700">${p.progress}%</span>
+        </div>
+        <div style="font-size:.75rem;color:var(--mid);margin-bottom:.75rem">${p.description}</div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="quickLog('${p.id}')">📋 RAPPORT RAPIDE</button>
+          <button class="btn btn-sm btn-secondary" onclick="openRating('${p.id}')">⭐ ÉVALUATION CLIENT</button>
+        </div>
+      </div>
+    `).join('')}
+    
+    <!-- COMPLETED -->
+    ${myProjects.filter(p=>p.status==='completed').length>0?`
+      <h3 style="font-size:1rem;font-weight:700;margin:.75rem 0;letter-spacing:.06em">MISSIONS TERMINÉES</h3>
+      ${myProjects.filter(p=>p.status==='completed').map(p=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:.6rem .8rem;border:1px solid var(--border);margin-bottom:.4rem;opacity:.7">
+          <div>
+            <div style="font-weight:600;font-size:.85rem">${p.name}</div>
+            <div style="font-size:.65rem;color:var(--mid)">${p.client}</div>
+          </div>
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <span class="badge badge-active">TERMINÉ</span>
+            <button class="btn btn-sm btn-secondary" onclick="openRating('${p.id}')">⭐ ÉVALUATION</button>
+          </div>
+        </div>
+      `).join('')}
+    `:''}
+  </div>`;
+}
+
+function quickLog(projectId){
+  appState.quickLogProject=projectId;
+  switchTab('logform');
+}
+
+// =============================================
+// ENGINEER: DAILY LOG FORM
+// =============================================
+function renderLogForm(el){
+  const user=appState.currentUser;
+  const projects=DB.get('projects')||[];
+  const inventory=DB.get('inventory')||[];
+  const myProjects=projects.filter(p=>p.assignedTo===user.id&&p.status==='active');
+  const selectedProj=appState.quickLogProject||'';
+  appState.quickLogProject=null;
+  
+  el.innerHTML=`
+  <div style="padding:1rem;max-width:700px">
+    <h2 style="font-size:1.6rem;margin-bottom:1rem">RAPPORT D'INTERVENTION JOURNALIER</h2>
+    
+    <div class="card animate-in">
+      <div class="card-header">
+        <div class="card-title">📋 NOUVEAU RAPPORT</div>
+        <span style="font-size:.7rem;color:var(--mid)">${now()}</span>
+      </div>
+      
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <!-- PROJECT SELECT -->
+        <div>
+          <label>PROJET</label>
+          <select id="lf-proj">
+            <option value="">-- Sélectionner un projet --</option>
+            ${myProjects.map(p=>`<option value="${p.id}" ${p.id===selectedProj?'selected':''}>${p.name}</option>`).join('')}
+          </select>
+        </div>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div>
+            <label>DATE D'INTERVENTION</label>
+            <input type="date" id="lf-date" value="${now()}"/>
+          </div>
+          <div>
+            <label>HEURES TRAVAILLÉES</label>
+            <input type="number" id="lf-hours" min="1" max="16" value="8"/>
+          </div>
+        </div>
+        
+        <!-- CATEGORY HOURS -->
+        <div>
+          <label>RÉPARTITION PAR CATÉGORIE (nombre d'unités traitées)</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.4rem">
+            ${[
+              ['ip_camera','📷 Caméras IP installées'],
+              ['mobile_access','📱 Accès Mobile/Remote configurés'],
+              ['networking','🌐 Configurations Réseau avancé'],
+              ['nvr_config','🎞️ NVR/DVR configurés'],
+            ].map(([key,label])=>`
+              <div style="padding:.6rem;background:var(--panel);border:1px solid var(--border)">
+                <label style="font-size:.65rem">${label}</label>
+                <input type="number" id="lf-${key}" min="0" value="0" style="background:white"/>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <!-- EQUIPMENT USED -->
+        <div>
+          <label>ÉQUIPEMENTS DÉPLOYÉS</label>
+          <div id="lf-equip-list" style="display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.4rem"></div>
+          <select id="lf-equip-sel" onchange="addEquipToLog(this)">
+            <option value="">+ Ajouter équipement</option>
+            ${inventory.map(i=>`<option value="${i.name}">${i.name}</option>`).join('')}
+            <option value="__custom__">Autre (saisir manuellement)</option>
+          </select>
+          <input type="text" id="lf-equip-custom" placeholder="Nom équipement personnalisé" class="hidden" style="margin-top:.4rem"/>
+        </div>
+        
+        <!-- NOTES -->
+        <div>
+          <label>NOTES TECHNIQUES DÉTAILLÉES</label>
+          <textarea id="lf-notes" rows="4" placeholder="Décrivez les actions effectuées, difficultés rencontrées, configurations appliquées..."></textarea>
+        </div>
+        
+        <!-- COMPLEX SCENARIO -->
+        <div id="lf-complex-warn" class="alert alert-warn hidden">
+          <strong>⬡ Scénario Réseau Complexe Détecté</strong><br>
+          Ce rapport sera automatiquement marqué comme installation complexe multi-NVR avec bridging réseau.
+        </div>
+        
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn btn-primary" style="flex:1" onclick="submitLog()">✓ SOUMETTRE LE RAPPORT</button>
+          <button class="btn btn-secondary" onclick="printReceipt()">🖨️ IMPRIMER (BLUETOOTH)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREVIOUS LOGS -->
+    <div style="margin-top:1rem">
+      <h3 style="font-size:.9rem;font-weight:700;margin-bottom:.75rem;letter-spacing:.08em">MES RAPPORTS PRÉCÉDENTS</h3>
+      ${(DB.get('logs')||[]).filter(l=>l.engineerId===user.id).reverse().slice(0,5).map(l=>{
+        const proj=(DB.get('projects')||[]).find(p=>p.id===l.projectId);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;border:1px solid var(--border);margin-bottom:.3rem;font-size:.8rem">
+          <div>
+            <span style="font-weight:700">${proj?proj.name:'Projet archivé'}</span>
+            <span style="color:var(--mid);font-size:.7rem;margin-left:.5rem">${l.date} · ${l.hours}h</span>
+          </div>
+          <span class="badge badge-active">SOUMIS</span>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+  
+  // Watch project select for complexity
+  const projSel=document.getElementById('lf-proj');
+  if(projSel){
+    projSel.addEventListener('change',function(){
+      const proj=(DB.get('projects')||[]).find(p=>p.id===this.value);
+      const warn=document.getElementById('lf-complex-warn');
+      if(proj&&proj.complex) warn.classList.remove('hidden');
+      else warn.classList.add('hidden');
+    });
+    if(selectedProj) projSel.dispatchEvent(new Event('change'));
+  }
+  
+  window._logEquipment=[];
+}
+
+function addEquipToLog(sel){
+  const val=sel.value;
+  if(!val) return;
+  if(val==='__custom__'){
+    document.getElementById('lf-equip-custom').classList.remove('hidden');
+    sel.value='';
+    return;
+  }
+  window._logEquipment=window._logEquipment||[];
+  if(!window._logEquipment.includes(val)){
+    window._logEquipment.push(val);
+    refreshEquipList();
+  }
+  sel.value='';
+}
+
+function refreshEquipList(){
+  const list=document.getElementById('lf-equip-list');
+  if(!list) return;
+  list.innerHTML=(window._logEquipment||[]).map(e=>`
+    <span style="display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .5rem;background:var(--ink);color:white;font-size:.65rem">
+      ${e} <button onclick="removeEquip('${e}')" style="background:none;border:none;color:white;cursor:pointer;font-size:.8rem">✕</button>
+    </span>
+  `).join('');
+}
+
+function removeEquip(name){
+  window._logEquipment=(window._logEquipment||[]).filter(e=>e!==name);
+  refreshEquipList();
+}
+
+function submitLog(){
+  const projId=document.getElementById('lf-proj').value;
+  const date=document.getElementById('lf-date').value;
+  const hours=parseInt(document.getElementById('lf-hours').value)||0;
+  const notes=document.getElementById('lf-notes').value.trim();
+  
+  if(!projId){alert('Veuillez sélectionner un projet.');return;}
+  if(!notes){alert('Veuillez ajouter des notes techniques.');return;}
+  
+  // Custom equip
+  const customEquip=document.getElementById('lf-equip-custom').value.trim();
+  if(customEquip&&!(window._logEquipment||[]).includes(customEquip)){
+    window._logEquipment=window._logEquipment||[];
+    window._logEquipment.push(customEquip);
+  }
+  
+  const categories={
+    ip_camera:parseInt(document.getElementById('lf-ip_camera').value)||0,
+    mobile_access:parseInt(document.getElementById('lf-mobile_access').value)||0,
+    networking:parseInt(document.getElementById('lf-networking').value)||0,
+    nvr_config:parseInt(document.getElementById('lf-nvr_config').value)||0,
+  };
+  
+  const log={
+    id:uid(),
+    engineerId:appState.currentUser.id,
+    projectId:projId,
+    date,hours,categories,
+    equipment:window._logEquipment||[],
+    notes,
+    status:'submitted',
+  };
+  
+  const logs=DB.get('logs')||[];
+  logs.push(log);
+  DB.set('logs',logs);
+  
+  // Auto-increment engineer scores
+  const users=DB.get('users')||[];
+  const user=users.find(u=>u.id===appState.currentUser.id);
+  if(user){
+    if(!user.scores) user.scores={ip_camera:0,mobile_access:0,networking:0,nvr_config:0};
+    user.scores.ip_camera+=categories.ip_camera*5;
+    user.scores.mobile_access+=categories.mobile_access*5;
+    user.scores.networking+=categories.networking*5;
+    user.scores.nvr_config+=categories.nvr_config*5;
+    user.totalJobs=(user.totalJobs||0)+1;
+    DB.set('users',users);
+    appState.currentUser=user;
+  }
+  
+  window._logEquipment=[];
+  showToast('Rapport soumis avec succès! Scores mis à jour.');
+  renderTab('logform');
+}
+
+function printReceipt(){
+  const user=appState.currentUser;
+  const projId=document.getElementById('lf-proj')?.value;
+  const proj=projId?(DB.get('projects')||[]).find(p=>p.id===projId):null;
+  const date=document.getElementById('lf-date')?.value||now();
+  const hours=document.getElementById('lf-hours')?.value||'—';
+  const notes=document.getElementById('lf-notes')?.value||'';
+  
+  const printEl=document.getElementById('print-area');
+  printEl.innerHTML=`
+    <div style="font-family:monospace;font-size:12px;max-width:300px;padding:10px">
+      <div style="text-align:center;border-bottom:2px solid black;padding-bottom:8px;margin-bottom:8px">
+        <div style="font-size:18px;font-weight:bold">CAMTRACK PRO</div>
+        <div style="font-size:10px">BON D'INTERVENTION</div>
+      </div>
+      <div style="margin-bottom:4px"><strong>Technicien:</strong> ${user.name}</div>
+      <div style="margin-bottom:4px"><strong>Projet:</strong> ${proj?proj.name:'N/A'}</div>
+      <div style="margin-bottom:4px"><strong>Client:</strong> ${proj?proj.client:'N/A'}</div>
+      <div style="margin-bottom:4px"><strong>Date:</strong> ${date}</div>
+      <div style="margin-bottom:8px"><strong>Durée:</strong> ${hours}h</div>
+      <div style="border-top:1px dashed black;padding-top:6px;margin-bottom:6px">
+        <strong>Notes:</strong><br>${notes}
+      </div>
+      <div style="text-align:center;border-top:1px solid black;padding-top:6px;font-size:10px">
+        Signature technicien: _______________<br>
+        Signature client: _______________<br>
+        ${new Date().toLocaleString()}
+      </div>
+    </div>
+  `;
+  
+  showModal('🖨️ IMPRESSION BLUETOOTH',`
+    <div class="alert alert-info" style="margin-bottom:1rem">
+      Connexion Bluetooth simulée. En production, utilise l'API Web Bluetooth pour envoyer à votre imprimante thermique Bluetooth.
+    </div>
+    <div style="border:1px solid var(--border);padding:1rem;font-family:monospace;font-size:.75rem;white-space:pre-wrap;background:white">
+================================
+        CAMTRACK PRO
+      BON D'INTERVENTION
+================================
+Technicien: ${user.name}
+Projet: ${proj?proj.name:'N/A'}
+Client:  ${proj?proj.client:'N/A'}
+Date: ${date}
+Durée: ${hours}h
+--------------------------------
+NOTES:
+${notes}
+--------------------------------
+Sig. Technicien: _______________
+Sig. Client:     _______________
+
+${new Date().toLocaleString()}
+================================
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:1rem">
+      <button class="btn btn-primary" onclick="window.print()">🖨️ IMPRIMER</button>
+      <button class="btn btn-secondary" onclick="closeModal()">FERMER</button>
+    </div>
+  `);
+}
+
+// =============================================
+// ENGINEER: LOGISTICS
+// =============================================
+function renderLogistics(el){
+  const user=appState.currentUser;
+  const projects=DB.get('projects')||[];
+  const myProjects=projects.filter(p=>p.assignedTo===user.id&&p.status==='active');
+  const alerts=DB.get('alerts')||[];
+  const myAlerts=alerts.filter(a=>a.engineerId===user.id);
+  
+  el.innerHTML=`
+  <div style="padding:1rem;max-width:700px">
+    <h2 style="font-size:1.6rem;margin-bottom:1rem">LOGISTIQUE & ALERTES</h2>
+    
+    <!-- NEW MATERIAL REQUEST -->
+    <div class="card animate-in" style="margin-bottom:1rem">
+      <div class="card-header">
+        <div class="card-title">📦 DEMANDE DE MATÉRIAUX</div>
+        <span style="font-size:.65rem;color:var(--mid)">POUR DEMAIN MATIN</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.9rem">
+        <div>
+          <label>PROJET</label>
+          <select id="log-proj">
+            <option value="">-- Projet --</option>
+            ${myProjects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label>MATÉRIAUX REQUIS</label>
+          <textarea id="log-msg" rows="3" placeholder="Ex: 12 câbles Cat6 30m + 2 têtes PTZ model X + 1 switch 16 ports PoE..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="sendMaterialAlert()">📤 ENVOYER LA DEMANDE À L'ADMIN</button>
+      </div>
+    </div>
+    
+    <!-- URGENT TECHNICAL ALERT -->
+    <div class="card animate-in" style="margin-bottom:1rem;animation-delay:.1s;border-color:var(--red)">
+      <div class="card-header">
+        <div class="card-title" style="color:var(--red)">🚨 ALERTE TECHNIQUE URGENTE</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.9rem">
+        <div>
+          <label>PROJET</label>
+          <select id="urg-proj">
+            <option value="">-- Projet --</option>
+            ${myProjects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label>DESCRIPTION DE L'URGENCE</label>
+          <textarea id="urg-msg" rows="3" placeholder="Ex: NVR principal ne démarre plus après coupure réseau. Test effectués. Remplacement requis immédiatement."></textarea>
+        </div>
+        <button class="btn btn-danger" onclick="sendUrgentAlert()">🚨 ENVOYER ALERTE URGENTE</button>
+      </div>
+    </div>
+    
+    <!-- MY SENT ALERTS -->
+    <div class="card animate-in" style="animation-delay:.2s">
+      <div class="card-header">
+        <div class="card-title">📤 MES NOTIFICATIONS ENVOYÉES (${myAlerts.length})</div>
+      </div>
+      ${myAlerts.length===0?`<p style="font-size:.8rem;color:var(--mid)">Aucune notification envoyée</p>`:
+      myAlerts.map(a=>`
+        <div style="padding:.6rem;border-left:3px solid ${a.type==='urgent'?'var(--red)':'var(--gold)'};margin-bottom:.5rem;background:var(--panel)">
+          <div style="font-size:.7rem;font-weight:700;color:${a.type==='urgent'?'var(--red)':'var(--gold)'}">${a.type==='urgent'?'🚨 URGENT':'📦 MATÉRIEL'}</div>
+          <div style="font-size:.8rem;margin:.3rem 0">${a.message}</div>
+          <div style="font-size:.65rem;color:var(--mid);">${a.date} · ${a.read?'<span style="color:var(--success)">✓ Lu par admin</span>':'<span style="color:var(--gold)">En attente</span>'}</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+}
+
+function sendMaterialAlert(){
+  const projId=document.getElementById('log-proj').value;
+  const msg=document.getElementById('log-msg').value.trim();
+  if(!msg){alert('Veuillez saisir les matériaux requis');return;}
+  const alerts=DB.get('alerts')||[];
+  alerts.push({id:uid(),engineerId:appState.currentUser.id,projectId:projId,type:'material',message:msg,date:now(),read:false});
+  DB.set('alerts',alerts);
+  document.getElementById('log-msg').value='';
+  document.getElementById('log-proj').value='';
+  showToast('Demande envoyée à l\'admin.');
+  renderTab('logistics');
+}
+
+function sendUrgentAlert(){
+  const projId=document.getElementById('urg-proj').value;
+  const msg=document.getElementById('urg-msg').value.trim();
+  if(!msg){alert('Veuillez décrire l\'urgence');return;}
+  const alerts=DB.get('alerts')||[];
+  alerts.push({id:uid(),engineerId:appState.currentUser.id,projectId:projId,type:'urgent',message:msg,date:now(),read:false});
+  DB.set('alerts',alerts);
+  document.getElementById('urg-msg').value='';
+  document.getElementById('urg-proj').value='';
+  showToast('⚠️ Alerte urgente envoyée!');
+  renderTab('logistics');
+}
+
+// =============================================
+// ENGINEER: KNOWLEDGE BASE
+// =============================================
+function renderKnowledge(el){
+  const inventory=DB.get('inventory')||[];
+  const cats=['cameras','nvrs','switches','routers','accessories'];
+  const catLabels={cameras:'📷 CAMÉRAS IP',nvrs:'🎞️ NVR / DVR',switches:'🌐 SWITCHES',routers:'🔌 ROUTEURS',accessories:'🔧 ACCESSOIRES'};
+  
+  let activecat='cameras';
+  
+  el.innerHTML=`
+  <div style="padding:1rem">
+    <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+      <div>
+        <h2 style="font-size:1.6rem">BASE DE CONNAISSANCES TERRAIN</h2>
+        <div style="font-size:.7rem;color:var(--mid);letter-spacing:.08em">Accès rapide à la documentation officielle · Support fabricant</div>
+      </div>
+      <div style="background:var(--ink);color:white;padding:.5rem .9rem;font-size:.7rem;font-weight:700;letter-spacing:.08em;border-left:4px solid var(--red)">
+        EN CAS DE PANNE SUR SITE :<br>
+        <span style="color:var(--gold)">Sélectionner catégorie → Modèle → DOC OFFICIELLE</span>
+      </div>
+    </div>
+    
+    <!-- CATEGORY FILTER -->
+    <div style="display:flex;gap:.4rem;margin-bottom:1rem;flex-wrap:wrap">
+      ${cats.map(c=>`<button class="cat-pill ${c===activecat?'active':''}" onclick="filterKB('${c}',this)">${catLabels[c]}</button>`).join('')}
+    </div>
+    
+    <!-- EQUIPMENT GRID -->
+    <div id="kb-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem">
+      ${renderKBItems(inventory,activecat,catLabels)}
+    </div>
+    
+    <!-- COMPLEX NETWORK GUIDE -->
+    <div class="card animate-in" style="margin-top:1.25rem;border:2px solid #7b2fbe">
+      <div class="card-header" style="background:#f5edff">
+        <div class="card-title" style="color:#7b2fbe">⬡ GUIDE — INSTALLATION MULTI-NVR COMPLEXE</div>
+        <span class="complexity-tag">RÉSEAU AVANCÉ</span>
+      </div>
+      <div style="font-size:.8rem;line-height:1.7">
+        <div style="font-weight:700;margin-bottom:.5rem">Scénario: > 40 caméras · Multi-NVR/DVR · Switch réseau · Vue mobile unifiée</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <div>
+            <div style="font-weight:700;font-size:.7rem;letter-spacing:.08em;color:#7b2fbe;margin-bottom:.3rem">ÉTAPES CONFIGURATION RÉSEAU</div>
+            <ol style="padding-left:1rem;font-size:.75rem">
+              <li>Assigner IP statiques à chaque NVR (ex: 192.168.1.10, .11, .12)</li>
+              <li>Configurer VLANs sur le switch pour isoler flux vidéo</li>
+              <li>Activer port forwarding sur le modem (ports RTSP: 554, HTTP: 80/8080)</li>
+              <li>Configurer chaque NVR avec DDns ou IP publique</li>
+              <li>Dans l'app mobile (Hik-Connect/DMSS): ajouter chaque NVR via S/N ou IP</li>
+              <li>Créer un "groupe de caméras" pour vue unifiée multi-NVR</li>
+            </ol>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:.7rem;letter-spacing:.08em;color:#7b2fbe;margin-bottom:.3rem">POINTS DE DÉPANNAGE</div>
+            <ul style="padding-left:1rem;font-size:.75rem">
+              <li>Flux absent: vérifier port forwarding + pare-feu NAT</li>
+              <li>Latence élevée: activer compression H.265+ sur NVR</li>
+              <li>App ne voit pas tous NVR: vérifier ports uniques par NVR</li>
+              <li>Image floue nuit: régler WDR + BLC selon éclairage</li>
+              <li>Switch saturé: vérifier bande passante PoE totale</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderKBItems(inventory,cat,catLabels){
+  const items=inventory.filter(i=>i.category===cat);
+  if(items.length===0) return `<div class="alert alert-info" style="grid-column:1/-1">Aucun équipement dans cette catégorie. L'admin peut en ajouter via l'inventaire.</div>`;
+  return items.map(item=>`
+    <div class="card animate-in" style="position:relative">
+      <div style="font-size:.6rem;font-weight:700;letter-spacing:.12em;color:var(--mid);margin-bottom:.3rem">${item.brand} · ${item.category.toUpperCase()}</div>
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:.25rem">${item.name}</div>
+      <div style="font-size:.7rem;color:var(--mid);margin-bottom:.75rem;font-family:var(--font-mono)">${item.model}</div>
+      ${item.notes?`<div style="font-size:.75rem;margin-bottom:.75rem;padding:.5rem;background:var(--panel);border-left:3px solid var(--border)">${item.notes}</div>`:''}
+      <div style="display:flex;gap:.4rem">
+        ${item.docUrl?`
+          <a href="${item.docUrl}" target="_blank" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;text-decoration:none">
+            🔗 DOC OFFICIELLE
+          </a>
+        `:`<button class="btn btn-secondary btn-sm" style="flex:1;opacity:.4" disabled>DOC NON DISPONIBLE</button>`}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterKB(cat,btn){
+  document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const inventory=DB.get('inventory')||[];
+  const catLabels={cameras:'📷 CAMÉRAS IP',nvrs:'🎞️ NVR / DVR',switches:'🌐 SWITCHES',routers:'🔌 ROUTEURS',accessories:'🔧 ACCESSOIRES'};
+  document.getElementById('kb-grid').innerHTML=renderKBItems(inventory,cat,catLabels);
+}
+
+// =============================================
+// ENGINEER: PROFILE + CLIENT RATING
+// =============================================
+function renderProfile(el){
+  const user=appState.currentUser;
+  const users=DB.get('users')||[];
+  const fullUser=users.find(u=>u.id===user.id)||user;
+  const ratings=DB.get('ratings')||[];
+  const myRatings=ratings.filter(r=>r.engineerId===user.id);
+  const avgRating=myRatings.length>0?
+    Math.round(myRatings.reduce((s,r)=>s+r.average,0)/myRatings.length*10)/10:0;
+  const s=fullUser.scores||{ip_camera:0,mobile_access:0,networking:0,nvr_config:0};
+  
+  el.innerHTML=`
+  <div style="padding:1rem;max-width:700px">
+    <h2 style="font-size:1.6rem;margin-bottom:1rem">MON PROFIL TERRAIN</h2>
+    
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:1.5rem;align-items:start;margin-bottom:1.25rem">
+      <!-- AVATAR + RATING -->
+      <div style="text-align:center">
+        <div style="width:80px;height:80px;background:var(--ink);border:4px solid var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:2.2rem;color:white;margin-bottom:.5rem">
+          ${fullUser.name.split(' ').map(n=>n[0]).join('').slice(0,2)}
+        </div>
+        <div class="rating-big">${avgRating||'—'}</div>
+        <div style="font-size:.6rem;color:var(--mid);letter-spacing:.08em">RATING MOYEN</div>
+        <div style="margin-top:.25rem">${'★'.repeat(Math.round(avgRating))}${'☆'.repeat(5-Math.round(avgRating))}</div>
+      </div>
+      
+      <div>
+        <div style="font-size:1.3rem;font-weight:700">${fullUser.name}</div>
+        <div style="font-size:.7rem;color:var(--mid);letter-spacing:.08em;margin-bottom:.75rem">@${fullUser.username} · ${fullUser.totalJobs||0} MISSIONS</div>
+        
+        <!-- SCORES -->
+        ${[
+          ['📷 Caméra IP',s.ip_camera,200],
+          ['📱 Mobile/Remote',s.mobile_access,200],
+          ['🌐 Réseau Avancé',s.networking,200],
+          ['🎞️ Config NVR',s.nvr_config,200],
+        ].map(([label,val,max])=>`
+          <div style="margin-bottom:.6rem">
+            <div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:.2rem">
+              <span style="font-weight:600">${label}</span>
+              <span style="font-weight:800;font-family:var(--font-display);font-size:1rem">${val} <span style="font-size:.6rem;font-family:var(--font-mono);color:var(--mid)">pts</span></span>
+            </div>
+            <div class="progress-bar" style="height:8px">
+              <div class="progress-fill" style="width:${Math.min(100,Math.round(val/max*100))}%;background:${val>150?'var(--success)':val>80?'var(--gold)':'var(--ink)'}"></div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    
+    <!-- CLIENT RATING MODULE -->
+    <div class="card animate-in" style="border:2px solid var(--gold);margin-bottom:1rem">
+      <div class="card-header" style="background:var(--ink);color:white">
+        <div class="card-title" style="color:white">⭐ MODULE D'ÉVALUATION CLIENT</div>
+        <span style="font-size:.65rem;color:#aaa">REMETTRE LE TÉLÉPHONE AU CLIENT</span>
+      </div>
+      <div id="rating-module">
+        ${renderRatingModule()}
+      </div>
+    </div>
+    
+    <!-- RATING HISTORY -->
+    <div class="card animate-in" style="animation-delay:.1s">
+      <div class="card-header">
+        <div class="card-title">📊 HISTORIQUE DES ÉVALUATIONS</div>
+      </div>
+      ${myRatings.length===0?`<p style="font-size:.8rem;color:var(--mid)">Aucune évaluation reçue</p>`:
+      myRatings.map(r=>`
+        <div style="display:flex;align-items:center;gap:1rem;padding:.6rem;border-bottom:1px solid var(--border)">
+          <div style="font-size:1.8rem;font-family:var(--font-display);color:var(--gold)">${r.average}</div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:.85rem">${r.clientName||'Client'}</div>
+            <div style="font-size:.7rem;color:var(--mid)">
+              Qualité: ${renderStarsDisplay(r.quality)} · Rapidité: ${renderStarsDisplay(r.speed)} · ${r.date}
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
+}
+
+function renderStarsDisplay(n){
+  return '★'.repeat(n)+'☆'.repeat(5-n);
+}
+
+function renderRatingModule(){
+  const user=appState.currentUser;
+  const projects=DB.get('projects')||[];
+  const myProjects=projects.filter(p=>p.assignedTo===user.id);
+  
+  return `
+    <div style="padding:1.25rem">
+      <div style="font-size:.8rem;margin-bottom:1rem;text-align:center;color:var(--mid)">
+        Veuillez évaluer la prestation de votre technicien
+      </div>
+      
+      <div style="margin-bottom:1rem">
+        <label>PROJET CONCERNÉ</label>
+        <select id="rating-proj">
+          <option value="">-- Sélectionner --</option>
+          ${myProjects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+        </select>
+      </div>
+      
+      <div style="margin-bottom:1rem">
+        <label style="text-align:center;display:block;margin-bottom:.6rem">QUALITÉ DU TRAVAIL</label>
+        <div class="stars" id="stars-quality" style="justify-content:center;font-size:2rem" data-val="0">
+          ${[1,2,3,4,5].map(i=>`<span class="star" data-n="${i}" onclick="setStar('quality',${i})">★</span>`).join('')}
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1.25rem">
+        <label style="text-align:center;display:block;margin-bottom:.6rem">RAPIDITÉ D'EXÉCUTION</label>
+        <div class="stars" id="stars-speed" style="justify-content:center;font-size:2rem" data-val="0">
+          ${[1,2,3,4,5].map(i=>`<span class="star" data-n="${i}" onclick="setStar('speed',${i})">★</span>`).join('')}
+        </div>
+      </div>
+      
+      <div style="margin-bottom:1rem">
+        <label>VOTRE NOM (optionnel)</label>
+        <input type="text" id="rating-client" placeholder="M. Nom Client"/>
+      </div>
+      
+      <button class="btn btn-gold" style="width:100%;justify-content:center;font-size:.9rem" onclick="submitRating()">
+        ✓ VALIDER L'ÉVALUATION
+      </button>
+    </div>
+  `;
+}
+
+window._ratingVals={quality:0,speed:0};
+
+function setStar(type,n){
+  window._ratingVals=window._ratingVals||{quality:0,speed:0};
+  window._ratingVals[type]=n;
+  const container=document.getElementById(`stars-${type}`);
+  if(container){
+    container.querySelectorAll('.star').forEach((star,i)=>{
+      star.style.color=i<n?'var(--gold)':'#ddd';
+    });
+  }
+}
+
+function submitRating(){
+  const projId=document.getElementById('rating-proj').value;
+  const quality=window._ratingVals.quality;
+  const speed=window._ratingVals.speed;
+  if(!projId){alert('Sélectionnez un projet');return;}
+  if(!quality||!speed){alert('Veuillez noter les 2 critères');return;}
+  
+  const clientName=document.getElementById('rating-client').value||'Client';
+  const average=Math.round((quality+speed)/2*10)/10;
+  
+  const ratings=DB.get('ratings')||[];
+  ratings.push({id:uid(),engineerId:appState.currentUser.id,projectId:projId,quality,speed,average,date:now(),clientName});
+  DB.set('ratings',ratings);
+  
+  // Update engineer avg
+  const users=DB.get('users')||[];
+  const u=users.find(x=>x.id===appState.currentUser.id);
+  if(u){
+    const myR=ratings.filter(r=>r.engineerId===u.id);
+    u.avgRating=Math.round(myR.reduce((s,r)=>s+r.average,0)/myR.length*10)/10;
+    DB.set('users',users);
+    appState.currentUser=u;
+  }
+  
+  window._ratingVals={quality:0,speed:0};
+  showToast(`⭐ Évaluation ${average}/5 enregistrée. Merci!`);
+  renderTab('profile');
+}
+
+function openRating(projectId){
+  const user=appState.currentUser;
+  showModal('⭐ ÉVALUATION CLIENT',`
+    <div>
+      <div style="font-size:.8rem;margin-bottom:1rem;text-align:center;background:var(--panel);padding:.75rem">
+        Remettez le téléphone au client pour qu'il évalue la prestation.
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="text-align:center;display:block;margin-bottom:.6rem">QUALITÉ DU TRAVAIL</label>
+        <div class="stars" id="stars-quality" style="justify-content:center;font-size:2.5rem">
+          ${[1,2,3,4,5].map(i=>`<span class="star" data-n="${i}" onclick="setStar('quality',${i})">★</span>`).join('')}
+        </div>
+      </div>
+      <div style="margin-bottom:1.25rem">
+        <label style="text-align:center;display:block;margin-bottom:.6rem">RAPIDITÉ D'EXÉCUTION</label>
+        <div class="stars" id="stars-speed" style="justify-content:center;font-size:2.5rem">
+          ${[1,2,3,4,5].map(i=>`<span class="star" data-n="${i}" onclick="setStar('speed',${i})">★</span>`).join('')}
+        </div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <label>NOM DU CLIENT</label>
+        <input type="text" id="rating-client" placeholder="M. / Mme..."/>
+      </div>
+      <input type="hidden" id="rating-proj" value="${projectId}"/>
+      <button class="btn btn-gold" style="width:100%;justify-content:center" onclick="submitRating();closeModal()">✓ VALIDER</button>
+    </div>
+  `);
+  window._ratingVals={quality:0,speed:0};
+}
+
+// =============================================
+// MODAL HELPERS
+// =============================================
+function showModal(title, body){
+  document.getElementById('modal-title-text').textContent=title;
+  document.getElementById('modal-body').innerHTML=body;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+function closeModalOverlay(e){
+  if(e.target===document.getElementById('modal-overlay')) closeModal();
+}
+
+// SIDE PANEL
+function openSidePanel(title,body){
+  document.getElementById('side-panel-title').textContent=title;
+  document.getElementById('side-panel-body').innerHTML=body;
+  document.getElementById('side-panel').classList.add('open');
+  document.getElementById('side-overlay').classList.remove('hidden');
+}
+
+function closeSidePanel(){
+  document.getElementById('side-panel').classList.remove('open');
+  document.getElementById('side-overlay').classList.add('hidden');
+}
+
+// TOAST
+function showToast(msg){
+  const existing=document.getElementById('toast-el');
+  if(existing) existing.remove();
+  const t=document.createElement('div');
+  t.id='toast-el';
+  t.style.cssText='position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--ink);color:white;padding:.7rem 1.25rem;font-size:.8rem;font-weight:600;z-index:999;border-left:4px solid var(--red);max-width:90vw;animation:fadeUp .3s ease';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+// =============================================
+// BOOT
+// =============================================
+initDB();
+setLang('fr');
+
+// Demo hint on login
+document.addEventListener('DOMContentLoaded',()=>{
+  const hint=document.createElement('div');
+  hint.style.cssText='position:fixed;bottom:1rem;right:1rem;background:#0a0a0a;color:#888;font-size:.65rem;padding:.5rem .8rem;z-index:1000;border:1px solid #333;max-width:220px;line-height:1.5';
+  hint.innerHTML='<strong style="color:#c0392b">DÉMO</strong><br>Admin: admin / admin123<br>Eng: karim / karim123<br>Eng: youcef / youcef123';
+  document.body.appendChild(hint);
+  setTimeout(()=>{hint.style.transition='opacity 2s';hint.style.opacity='0';setTimeout(()=>hint.remove(),2000)},8000);
+});
+</script>
+</body>
+</html>
